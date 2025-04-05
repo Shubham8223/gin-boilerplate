@@ -15,10 +15,12 @@ import (
 )
 
 func main() {
+	config.LoadEnv()
 	config.ConnectDB()
 
 	router := gin.Default()
-	routes.RegisterUserRoutes(router)
+    api := router.Group("/api/v1")
+	routes.RegisterUserRoutes(api)
 
 	server := &http.Server{
 		Addr:    ":8080",
@@ -32,7 +34,6 @@ func main() {
 	}()
 	log.Println("Server started on :8080")
 
-	// Graceful Shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 

@@ -1,0 +1,28 @@
+# Go binaries
+/bin/
+/out/
+/tmp/
+
+# Build artifacts
+*.exe
+*.exe~
+*.test
+*.out
+
+# IDE/Editor specific files
+*.idea/
+*.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+.air.toml
+

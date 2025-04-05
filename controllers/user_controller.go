@@ -20,7 +20,6 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
 
 

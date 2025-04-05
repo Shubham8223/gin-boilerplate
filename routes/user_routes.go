@@ -5,8 +5,8 @@ import (
 	"gin-boilerplate/controllers"
 )
 
-func RegisterUserRoutes(router *gin.Engine) {
-	userRoutes := router.Group("/users")
+func RegisterUserRoutes(r *gin.RouterGroup) {
+	userRoutes := r.Group("/users")
 	{
 		userRoutes.POST("/", controllers.CreateUser)
 		userRoutes.GET("/:id", controllers.GetUserByID)
