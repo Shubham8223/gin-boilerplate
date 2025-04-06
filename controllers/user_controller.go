@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
-
+	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
+
+	"gin-boilerplate/config"
 	"gin-boilerplate/models"
 	"gin-boilerplate/services"
 )
@@ -16,9 +19,20 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	if err := services.CreateUser(&user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
-		return
+	err := config.DB.Transaction(func(tx *gorm.DB) error {
+		createdUser, err := services.CreateUser(tx, &user)
+		if err != nil {
+			return err
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
+			"message": fmt.Sprintf("User %d created successfully", createdUser.ID),
+		})
+		return nil
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 }
 

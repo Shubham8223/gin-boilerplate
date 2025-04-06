@@ -21,6 +21,7 @@ func main() {
 	router := gin.Default()
     api := router.Group("/api/v1")
 	routes.RegisterUserRoutes(api)
+	routes.AuthUserRoutes(api)
 
 	server := &http.Server{
 		Addr:    ":8080",

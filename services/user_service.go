@@ -4,18 +4,23 @@ import (
 	"errors"
 
 	"gin-boilerplate/config"
+	"gorm.io/gorm"
 	"gin-boilerplate/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(user *models.User) error {
+func CreateUser(tx *gorm.DB, user *models.User) (*models.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return nil,err
 	}
 	user.Password = string(hashedPassword)
 
-	return config.DB.Create(user).Error
+	if err := tx.Create(user).Error; err != nil {
+		return nil,err
+	}
+
+	return user, nil
 }
 
 func GetUserByID(userID uint) (*models.User, error) {

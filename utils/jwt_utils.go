@@ -9,7 +9,7 @@ import (
 )
 
 
-var jwtSecret = string(os.Getenv("JWT_SECRET"))
+var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 type Claims struct {
 	UserID uint   `json:"user_id"`
