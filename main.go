@@ -1,17 +1,18 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"context"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"gin-boilerplate/config"
 	"gin-boilerplate/routes"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -20,8 +21,11 @@ func main() {
 
 	router := gin.Default()
     api := router.Group("/api/v1")
-	routes.RegisterUserRoutes(api)
+	routes.UserRoutes(api)
 	routes.AuthUserRoutes(api)
+	routes.OrderRoutes(api)
+	routes.ProductRoutes(api)
+	routes.CategoryRoutes(api)
 
 	server := &http.Server{
 		Addr:    ":8080",

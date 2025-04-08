@@ -2,13 +2,15 @@ package controllers
 
 import (
 	"net/http"
-	"github.com/gin-gonic/gin"
-	"gin-boilerplate/models"
+
+	"gin-boilerplate/schemas"
 	"gin-boilerplate/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 func UserLogin(c *gin.Context) {
-	var authUser models.AuthUser
+	var authUser schemas.AuthUser
 
 	if err := c.ShouldBindJSON(&authUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})

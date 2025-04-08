@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"gorm.io/gorm"
+
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
 	"gin-boilerplate/config"
-	"gin-boilerplate/models"
+	"gin-boilerplate/schemas"
 	"gin-boilerplate/services"
 )
 
 func CreateUser(c *gin.Context) {
-	var user models.User
+	var user schemas.CreateUserInput
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -49,14 +50,14 @@ func GetUserByID(c *gin.Context) {
 
 func UpdateUser(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	var updates map[string]interface{}
+	var updates schemas.UpdateUserInput
 
 	if err := c.ShouldBindJSON(&updates); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := services.UpdateUser(uint(id), updates); err != nil {
+	if err := services.UpdateUser(uint(id), &updates); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
 		return
 	}

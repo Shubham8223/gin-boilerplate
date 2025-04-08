@@ -1,17 +1,18 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"gin-boilerplate/controllers"
 	"gin-boilerplate/middlewares"
+
+	"github.com/gin-gonic/gin"
 )
 
-func RegisterUserRoutes(r *gin.RouterGroup) {
+func UserRoutes(r *gin.RouterGroup) {
 	userRoutes := r.Group("/users")
 	{
-		userRoutes.POST("/", middlewares.AuthMiddleware(), middlewares.RoleMiddleware([]string{"admin","user"}), controllers.CreateUser)
-		userRoutes.GET("/:id",middlewares.AuthMiddleware(), middlewares.RoleMiddleware([]string{"admin","user"}), controllers.GetUserByID)
-		userRoutes.PUT("/:id", middlewares.AuthMiddleware(),middlewares.RoleMiddleware([]string{"admin","user"}), controllers.UpdateUser)
-		userRoutes.DELETE("/:id", middlewares.AuthMiddleware(), middlewares.RoleMiddleware([]string{"admin","user"}), controllers.DeleteUser)
+		userRoutes.POST("/", middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"admin"}), controllers.CreateUser)
+		userRoutes.GET("/:id",middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"admin","user"}), controllers.GetUserByID)
+		userRoutes.PUT("/:id", middlewares.AuthMiddleware(),middlewares.RbacMiddleware([]string{"admin"}), controllers.UpdateUser)
+		userRoutes.DELETE("/:id", middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"admin"}), controllers.DeleteUser)
 	}
 }

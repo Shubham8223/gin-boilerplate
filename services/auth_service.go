@@ -2,15 +2,16 @@ package services
 
 import (
 	"errors"
-	"gin-boilerplate/models"
-	"gin-boilerplate/utils"
 	"gin-boilerplate/config"
+	"gin-boilerplate/models"
+	"gin-boilerplate/schemas"
+	"gin-boilerplate/utils"
 
-	"gorm.io/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
-func LoginUser(authUser *models.AuthUser) (string, error) {
+func LoginUser(authUser *schemas.AuthUser) (string, error) {
 	var user models.User
 
 	if err := config.DB.Where("email = ?", authUser.Email).First(&user).Error; err != nil {
