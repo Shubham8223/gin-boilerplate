@@ -29,10 +29,18 @@ func GetAllProducts() ([]models.Product, error) {
 	return products, nil
 }
 
-func GetProductByID(id uint) (*models.Product, error) {
-	var product models.Product
-	if err := config.DB.Preload("Orders").Preload("Category").First(&product, id).Error; err != nil {
-		return nil, errors.New("product not found")
+func GetProductByID(id uint) (*schemas.ResponseProductOutput, error) {
+	var product schemas.ResponseProductOutput
+	query := `
+	SELECT p.name,p.price,c.name AS category,array_agg(o.id) AS order_ids
+	FROM products p
+	INNER JOIN orders o ON p.id = o.product_id
+	INNER JOIN categories c ON p.category_id = c.id
+	WHERE p.id = ?
+	GROUP BY p.id, c.name`
+	
+	if err := config.DB.Raw(query, id).Scan(&product).Error; err != nil {
+		return nil, err
 	}
 	return &product, nil
 }

@@ -1,8 +1,6 @@
 package services
 
 import (
-	"errors"
-
 	"gin-boilerplate/config"
 	"gin-boilerplate/models"
 	"gin-boilerplate/schemas"
@@ -20,23 +18,51 @@ func CreateOrder(tx *gorm.DB, input *schemas.CreateOrderInput) (*models.Order, e
 	return order, nil
 }
 
-func GetOrderByID(orderID uint) (*models.Order, error) {
-	var order models.Order
-	if err := config.DB.First(&order, orderID).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("order not found")
-		}
+func GetOrderByID(orderID uint) (*schemas.ResponseOrderOutput, error) {
+	var order schemas.ResponseOrderOutput
+	query := `
+		SELECT u.name AS user, p.name AS product, o.quantity, o.total
+		FROM orders o
+		INNER JOIN users u ON u.id = o.user_id
+		INNER JOIN products p ON p.id = o.product_id
+		WHERE o.id = ?
+		`
+    if err := config.DB.Raw(query, orderID).Scan(&order).Error; err != nil {
 		return nil, err
 	}
 	return &order, nil
 }
 
-func GetOrderByUserId(userID uint) ([]models.Order, error) {
-	var orders []models.Order
-	if err := config.DB.Preload("User").Preload("Product").Where("user_id = ?", userID).Find(&orders).Error; err != nil {
-		return nil, errors.New("orders for userId not found")
+func GetOrderByUserId(userID uint) (*schemas.ResponseOrderPerUserOutput, error) {
+	var rows []schemas.ResponseOrderOutput
+	query := `
+		SELECT u.name AS user, p.name AS product, o.quantity, o.total
+		FROM orders o
+		INNER JOIN users u ON u.id = o.user_id
+		INNER JOIN products p ON p.id = o.product_id
+		WHERE u.id = ?
+		`
+	  if err := config.DB.Raw(query, userID).Scan(&rows).Error; err != nil {
+		return nil, err 
 	}
-	return orders, nil
+
+	if len(rows) == 0 {
+		return nil, nil 
+	}
+
+	output := &schemas.ResponseOrderPerUserOutput{
+		User:   rows[0].User,
+		Orders: []schemas.ResponseOrderListOutput{},
+	}
+
+	for _, row := range rows {
+		output.Orders = append(output.Orders, schemas.ResponseOrderListOutput{
+			Product:  row.Product,
+			Quantity: row.Quantity,
+			Total:    row.Total,
+		})
+	}
+	return output, nil
 }
 
 func UpdateOrder(orderID uint, updatedData *schemas.UpdateOrderInput) error {

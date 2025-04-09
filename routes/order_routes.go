@@ -12,6 +12,7 @@ func OrderRoutes(r *gin.RouterGroup) {
 	{
 		orderRoutes.POST("/", middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"user"}),controllers.CreateOrder)
 		orderRoutes.GET("/:id", middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"user"}),middlewares.ObacMiddleware(), controllers.GetOrderByID)
+		orderRoutes.GET("/users/:id", middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"user"}),middlewares.ObacMiddleware(), controllers.GetOrderByUserId)
 		orderRoutes.PUT("/:id", middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"user"}),middlewares.ObacMiddleware(), controllers.UpdateUser)
 		orderRoutes.DELETE("/:id", middlewares.AuthMiddleware(), middlewares.RbacMiddleware([]string{"user"}),middlewares.ObacMiddleware(), controllers.DeleteUser)
 	}

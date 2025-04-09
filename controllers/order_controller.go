@@ -59,6 +59,17 @@ func GetOrderByID(c *gin.Context) {
 	c.JSON(http.StatusOK, order)
 }
 
+func GetOrderByUserId(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	order, err := services.GetOrderByUserId(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found for this user"})
+		return
+	}
+	c.JSON(http.StatusOK, order)
+}
+
+
 func UpdateOrder(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	var updates schemas.UpdateOrderInput

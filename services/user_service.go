@@ -1,8 +1,6 @@
 package services
 
 import (
-	"errors"
-
 	"gin-boilerplate/config"
 	"gin-boilerplate/models"
 	"gin-boilerplate/schemas"
@@ -28,10 +26,17 @@ func CreateUser(tx *gorm.DB, input *schemas.CreateUserInput) (*models.User, erro
 	return user, nil
 }
 
-func GetUserByID(userID uint) (*models.User, error) {
-	var user models.User
-	if err := config.DB.Preload("Orders.Product").Preload("Orders").First(&user, userID).Error; err != nil {
-		return nil, errors.New("user not found")
+func GetUserByID(userID uint) (*schemas.ResponseUserOutput, error) {
+	var user schemas.ResponseUserOutput
+	query := `
+		SELECT u.name, u.email, array_agg(o.id) as order_ids
+		FROM users u
+		LEFT JOIN orders o ON u.id = o.user_id
+		WHERE u.id = ?
+		GROUP BY u.id
+	`
+	if err := config.DB.Raw(query, userID).Scan(&user).Error; err != nil {
+		return nil, err
 	}
 	return &user, nil
 }

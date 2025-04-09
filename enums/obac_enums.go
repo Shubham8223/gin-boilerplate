@@ -14,4 +14,9 @@ var ResourceMap = map[string]ObacResource{
 		OwnerKey: "UserID",
 		TableName: "orders",
 	},
+	"users": {
+		Model:    &models.User{},
+		OwnerKey: "ID",
+		TableName: "users",
+	},
 }
